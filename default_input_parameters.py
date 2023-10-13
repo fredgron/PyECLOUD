@@ -171,6 +171,10 @@ parameters_dict = {
             'Temp_K'            : -1,
             'unif_frac'         : -1,
             'E_init_ion'        : -1,
+            'EFI_th'            : -1,
+            'EFI_sz0'           : -1,
+            'EFI_bsp'           : -1,
+            'EFI_prob'          : 10,
 
             # Photoemission
             'photoem_flag'                      : 0,
@@ -368,6 +372,10 @@ parameters_dict = {
             'Temp_K': (),
             'unif_frac': (),
             'E_init_ion': (),
+            'EFI_th': (),
+            'EFI_sz0': (),
+            'EFI_bsp':(),
+            'EFI_prob': (),
 
             't_ion': (),
 
