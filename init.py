@@ -420,7 +420,8 @@ def read_input_files_and_init_components(pyecl_input_folder='./', skip_beam=Fals
         # Init gas ionization and photoemission
         if thiscloud.gas_ion_flag == 1:
             resgasion = gic.residual_gas_ionization(thiscloud.unif_frac, thiscloud.P_nTorr, thiscloud.sigma_ion_MBarn,
-                                                    thiscloud.Temp_K, chamb, thiscloud.E_init_ion, thiscloud.flag_lifetime_hist)
+                                                    thiscloud.Temp_K, chamb, thiscloud.E_init_ion, thiscloud.EFI_th, thiscloud.EFI_sz0,
+                                                    thiscloud.EFI_bsp, thiscloud.EFI_prob, thiscloud.flag_lifetime_hist)
         else:
             resgasion = None
 
