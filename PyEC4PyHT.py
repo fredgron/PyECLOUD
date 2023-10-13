@@ -55,7 +55,7 @@ import subprocess
 import time
 
 import numpy as np
-from scipy.constants import c
+from scipy.constants import c, e
 
 from . import myloadmat_to_obj as mlm
 from . import buildup_simulation as bsim
@@ -412,7 +412,9 @@ class Ecloud(object):
             # slice size and time step
             dz = slices.z_bins[i + 1] - slices.z_bins[i]
 
-            self._track_single_slice(beam, ix, dz, force_pyecl_newpass=(i == 0))
+            slicenum = slices.n_slices - (i+1)
+
+            self._track_single_slice(beam, ix, dz, force_pyecl_newpass=(i == 0), slicenum=slicenum)
 
         # Used by Lotta to debug fastion mode
         if self.beam_monitor is not None:
@@ -480,7 +482,7 @@ class Ecloud(object):
         self.track_only_first_time = False
         self.replace_with_recorded_field_map(delete_ecloud_data=delete_ecloud_data)
 
-    def _track_single_slice(self, slic, ix, dz, force_pyecl_newpass=False):
+    def _track_single_slice(self, slic, ix, dz, force_pyecl_newpass=False, slicenum=None):
 
         spacech_ele = self.cloudsim.spacech_ele
 
@@ -495,6 +497,9 @@ class Ecloud(object):
 
         # Compute slice length
         dt_slice = dz / (slic.beta * c)
+
+        new_gamma = (9.00e+9*e)/slic.mass/c**2
+        new_beta = np.sqrt(1-new_gamma**-2)
 
         # Check if sub-slicing is needed
         if self.cloudsim.config_dict["Dt"] is not None:
@@ -609,7 +614,8 @@ class Ecloud(object):
                 skip_MP_cleaning=skip_MP_cleaning,
                 skip_MP_regen=skip_MP_regen,
                 force_reinterp_fields_at_substeps=(interact_with_EC
-                    and self.force_interp_at_substeps_interacting_slices)
+                    and self.force_interp_at_substeps_interacting_slices),
+                slicenumber=slicenum
             )
 
             if interact_with_EC:
