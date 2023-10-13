@@ -169,6 +169,7 @@ class BuildupSimulation(object):
         force_reinterp_fields_at_substeps=False,
         skip_MP_cleaning=False,
         skip_MP_regen=False,
+        slicenumber = None,
     ):
 
         if beamtim_obj is not None:
@@ -207,7 +208,7 @@ class BuildupSimulation(object):
             cloud.impact_man.sey_mod.SEY_model_evol(Dt=beamtim.Dt_curr)
 
             ## Beam-gas ionization and photoemission
-            self._primary_generation(cloud, beamtim)
+            self._primary_generation(cloud, beamtim, bnum=slicenumber)
 
         ## Cross_ionization
         if self.cross_ion is not None:
@@ -393,7 +394,7 @@ class BuildupSimulation(object):
                     N_sub_steps=N_substeps_internal,
                 )
 
-    def _primary_generation(self, cloud, beamtim):
+    def _primary_generation(self, cloud, beamtim, bnum=None):
 
         ## Gas ionization (main and secondary beams)
         if beamtim.tt_curr < cloud.t_ion and cloud.gas_ion_flag == 1:
@@ -416,6 +417,7 @@ class BuildupSimulation(object):
                         sec_beam.sigmay,
                         x_beam_pos=sec_beam.x_beam_pos,
                         y_beam_pos=sec_beam.y_beam_pos,
+                        bnum=bnum
                     )
 
         ## Photoemission (main and secondary beams)
