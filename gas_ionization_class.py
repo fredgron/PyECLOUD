@@ -24,6 +24,7 @@
 #                           Annalisa Romano
 #                           Giovanni Rumolo
 #                           Eric Wulff
+#                           Fredrik Grønvold
 #
 #
 #     Copyright  CERN,  Geneva  2011  -  Copyright  and  any   other
@@ -59,7 +60,7 @@ from scipy.constants import c, k, e
 
 class residual_gas_ionization:
 
-    def __init__(self, unif_frac, P_nTorr, sigma_ion_MBarn, Temp_K, chamb, E_init_ion, flag_lifetime_hist = False):
+    def __init__(self, unif_frac, P_nTorr, sigma_ion_MBarn, Temp_K, chamb, E_init_ion, EFI_th, EFI_sz0, EFI_bsp, EFI_prob, flag_lifetime_hist = False):
 
         print('Start res. gas ioniz. init.')
         self.unif_frac = unif_frac
@@ -70,6 +71,24 @@ class residual_gas_ionization:
 #         self.sigmay = sigmay
         self.chamb = chamb
         self.E_init_ion = E_init_ion
+
+        self.EFI_th = EFI_th    #If EFI_th = -1, then EFI_flag = False ??
+        self.bsp = EFI_bsp      #Bunch spacing
+        self.sigmaz = EFI_sz0   #Conversion to match sz0 in FASTION?
+        self.Efield_flag = False
+        self.EFI_prob = EFI_prob
+        self.sx0fion = 0
+        self.sy0fion = 0
+
+        if self.bsp != -1 and self.EFI_th != -1 and self.sigmaz != -1:
+            self.use_EFI_flag = True 
+
+        elif self.bsp == -1 and self.EFI_th == -1 and self.sigmaz == -1:
+            self.use_EFI_flag = False
+
+        else:
+            raise ValueError("To use EFI feature all EFI parameters have to be defined")
+
 
 #         self.x_beam_pos = x_beam_pos
 #         self.y_beam_pos = y_beam_pos
