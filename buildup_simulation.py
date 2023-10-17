@@ -406,6 +406,7 @@ class BuildupSimulation(object):
                 beamtim.sigmay,
                 x_beam_pos=beamtim.x_beam_pos,
                 y_beam_pos=beamtim.y_beam_pos,
+                bnum = bnum
             )
             if self.flag_presence_sec_beams:
                 for sec_beam in self.sec_beams_list:
