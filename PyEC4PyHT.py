@@ -498,6 +498,8 @@ class Ecloud(object):
         # Compute slice length
         dt_slice = dz / (slic.beta * c)
 
+        # print("dt_slice: %.4e \nDt: %.4e"%(dt_slice, self.cloudsim.config_dict["Dt"]))
+
         new_gamma = (9.00e+9*e)/slic.mass/c**2
         new_beta = np.sqrt(1-new_gamma**-2)
 
