@@ -15,6 +15,7 @@ class cloud_descr_from_file:
             else:
                 cloud_name = 'default'
                 cloud_output_name = default_param_obj.filen_main_outp
+                # print(default_param_obj.filen_main_outp)
 
             config_dict = {}
             inp_spec.copy_to_config_dict(config_dict, 'additional_cloud_parameters', default_param_obj)
@@ -35,8 +36,13 @@ class cloud_descr_from_file:
             # Make names for cloud and cloud output
             cloud_name = cloudfilename.split('/')[-1].split('.cloud')[0]
 
-            cloud_output_name = default_param_obj.filen_main_outp.split('.mat')[0]
-            cloud_output_name += '_' + cloud_name + '.mat'
+            if default_param_obj.filen_main_outp is not None:
+                cloud_output_name = default_param_obj.filen_main_outp.split('.mat')[0]
+                cloud_output_name += '_' + cloud_name + '.mat'
+
+            else:
+                cloud_output_name = default_param_obj.filen_main_outp
+                # print(default_param_obj.filen_main_outp)
 
         config_dict['filen_main_outp'] = cloud_output_name
         config_dict['cloud_name'] = cloud_name
