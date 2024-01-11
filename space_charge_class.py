@@ -102,10 +102,25 @@ class space_charge:
                 self.PyPICobj = PIC_FFT_Open.FFT_OpenBoundary(x_aper=chamb.x_aper, y_aper=chamb.y_aper, dx=Dh[0], dy=Dh[1])
             else:
                 self.PyPICobj = PIC_FFT_Open.FFT_OpenBoundary(x_aper=chamb.x_aper, y_aper=chamb.y_aper, Dh=Dh)
-
             #To be replaced by a property to make it general (from PyPIC modules not having xn, yn)
             self.xn = None  # not implemented in this mode (for now)
             self.yn = None  # not implemented in this mode (for now)
+        
+        elif PyPICmode == 'FFT_OpenBoundary_WithTelescopicGrids':
+            if chamb.chamb_type != 'rect':
+                raise ValueError('''PyPICmode = 'FFT_OpenBoundary' can be used only if chamb_type = 'rect' ''' )
+            import PyPIC.FFT_OpenBoundary as PIC_FFT_Open
+            if len(np.atleast_1d(Dh)) == 2:
+                PyPICmain = PIC_FFT_Open.FFT_OpenBoundary(x_aper=chamb.x_aper, y_aper=chamb.y_aper, dx=Dh[0], dy=Dh[1])
+            else:
+                PyPICmain = PIC_FFT_Open.FFT_OpenBoundary(x_aper=chamb.x_aper, y_aper=chamb.y_aper, Dh=Dh)    
+            #PyPICmain = PIC_FDSW.FiniteDifferences_ShortleyWeller_SquareGrid(chamb=chamb, Dh=Dh, sparse_solver=sparse_solver)
+            import PyPIC.MultiGrid as PIC_MG
+            self.PyPICobj = PIC_MG.AddTelescopicGrids(pic_main=PyPICmain, f_telescope=f_telescope, target_grid=target_grid,
+                                                      N_nodes_discard=N_nodes_discard, N_min_Dh_main=N_min_Dh_main, sparse_solver=sparse_solver)
+            self.xn = None  # not implemented in this mode (for now)
+            self.yn = None  # not implemented in this mode (for now)
+        
         else:
             raise ValueError('PyPICmode not recognized')
 
