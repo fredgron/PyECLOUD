@@ -383,7 +383,7 @@ class Ecloud(object):
 
     #    @profile
     def track(self, beam):
-
+        #import ipdb; ipdb.set_trace()
         if self.track_only_first_time:
             if self.N_tracks > 0:
                 print("Warning: Track skipped because track_only_first_time is True.")
@@ -425,7 +425,7 @@ class Ecloud(object):
         if self.verbose:
             stop_time = time.mktime(time.localtime())
             print("Done track %d in %.1f s" % (self.N_tracks, stop_time - start_time))
-
+        
         self.N_tracks += 1
 
     def replace_with_recorded_field_map(self, delete_ecloud_data=True):

@@ -71,6 +71,7 @@ class space_charge:
             #To be replaced by a property to make it general (from PyPIC modules not having xn, yn)
             self.xn = self.PyPICobj.xn
             self.yn = self.PyPICobj.yn
+        
         elif PyPICmode == 'ShortleyWeller_WithTelescopicGrids':
             import PyPIC.FiniteDifferences_ShortleyWeller_SquareGrid as PIC_FDSW
             PyPICmain = PIC_FDSW.FiniteDifferences_ShortleyWeller_SquareGrid(chamb=chamb, Dh=Dh, sparse_solver=sparse_solver)
@@ -86,6 +87,7 @@ class space_charge:
             #To be replaced by a property to make it general (from PyPIC modules not having xn, yn)
             self.xn = self.PyPICobj.xn
             self.yn = self.PyPICobj.yn
+        
         elif PyPICmode == 'FFT_PEC_Boundary':
             if chamb.chamb_type != 'rect':
                 raise ValueError('''PyPICmode = 'FFT_PEC_Boundary' can be used only if chamb_type = 'rect' ''' )
@@ -94,6 +96,7 @@ class space_charge:
             #To be replaced by a property to make it general (from PyPIC modules not having xn, yn)
             self.xn = None  # not implemented in this mode (for now)
             self.yn = None  # not implemented in this mode (for now)
+        
         elif PyPICmode == 'FFT_OpenBoundary':
             if chamb.chamb_type != 'rect':
                 raise ValueError('''PyPICmode = 'FFT_OpenBoundary' can be used only if chamb_type = 'rect' ''' )
