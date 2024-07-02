@@ -384,6 +384,10 @@ class Ecloud(object):
     #    @profile
     def track(self, beam):
         #import ipdb; ipdb.set_trace()
+        print("P_nTorr:" , self.cloudsim.cloud_list[0].resgasion.P_nTorr)
+        print("nel_mp_ref:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref)
+        print("nel_mp_ref_0:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0)
+
         if self.track_only_first_time:
             if self.N_tracks > 0:
                 print("Warning: Track skipped because track_only_first_time is True.")
@@ -392,6 +396,14 @@ class Ecloud(object):
         if self.verbose:
             start_time = time.mktime(time.localtime())
 
+        if self.N_tracks == 1:
+
+            self.cloudsim.cloud_list[0].resgasion.P_nTorr = 70.
+            self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0 = self.cloudsim.cloud_list[0].resgasion.P_nTorr*self.cloudsim.cloud_list[0].resgasion.sigma_ion_MBarn/37.89
+
+            print("new P_nTorr:" , self.cloudsim.cloud_list[0].resgasion.P_nTorr)
+            print("new nel_mp_ref_0:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0)
+        
         self._reinitialize()
 
         if hasattr(beam.particlenumber_per_mp, "__iter__"):
