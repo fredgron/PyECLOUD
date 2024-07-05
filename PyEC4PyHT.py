@@ -381,6 +381,9 @@ class Ecloud(object):
         self.t_sim = 0.0
         self.i_curr_bunch = -1
 
+        self.vary_P_list = self.kwargs["vary_P_list"]
+        self.vary_P_flag = self.kwargs["vary_P_flag"]
+
     #    @profile
     def track(self, beam):
         #import ipdb; ipdb.set_trace()
@@ -396,13 +399,16 @@ class Ecloud(object):
         if self.verbose:
             start_time = time.mktime(time.localtime())
 
-        if self.N_tracks == 1:
+        if self.vary_P_flag:
+            if self.cloudsim.cloud_list[0].resgasion.P_nTorr != self.vary_P_list['Pressure'][self.N_tracks]:
 
-            self.cloudsim.cloud_list[0].resgasion.P_nTorr = 70.
-            self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0 = self.cloudsim.cloud_list[0].resgasion.P_nTorr*self.cloudsim.cloud_list[0].resgasion.sigma_ion_MBarn/37.89
+                self.cloudsim.cloud_list[0].resgasion.P_nTorr = self.vary_P_list['Pressure'][self.N_tracks]
+                self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0 = self.cloudsim.cloud_list[0].resgasion.P_nTorr*self.cloudsim.cloud_list[0].resgasion.sigma_ion_MBarn/37.89
 
-            print("new P_nTorr:" , self.cloudsim.cloud_list[0].resgasion.P_nTorr)
-            print("new nel_mp_ref_0:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0)
+                print("new P_nTorr:" , self.cloudsim.cloud_list[0].resgasion.P_nTorr)
+                print("new nel_mp_ref_0:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0)
+            else:
+                print('no change in pressure')
         
         self._reinitialize()
 
@@ -560,7 +566,7 @@ class Ecloud(object):
 
         # Cloud simulation
         for i_clou_step, dt in enumerate(dt_array):
-
+            
             # define substep
             if dt > self.Dt_ref:
                 N_sub_steps = int(np.round(dt / self.Dt_ref))
