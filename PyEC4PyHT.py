@@ -337,8 +337,8 @@ class Ecloud(object):
 
         # self.cloudsim.spacech_ele.flag_decimate = False
 
-        if self.cloudsim.flag_multiple_clouds:
-            raise ValueError("Multiple clouds not yet tested in PyEC4PyHT!")
+        # if self.cloudsim.flag_multiple_clouds:
+        #     raise ValueError("Multiple clouds not yet tested in PyEC4PyHT!")
 
         self.save_ele_distributions_last_track = False
         self.save_ele_potential_and_field = False
