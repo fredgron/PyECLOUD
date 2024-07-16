@@ -381,8 +381,8 @@ class Ecloud(object):
         self.t_sim = 0.0
         self.i_curr_bunch = -1
 
-        self.vary_P_list = self.kwargs["vary_P_list"]
-        self.vary_P_flag = self.kwargs["vary_P_flag"]
+        # self.vary_P_list = self.kwargs["vary_P_list"]
+        # self.vary_P_flag = self.kwargs["vary_P_flag"]
 
     #    @profile
     def track(self, beam):
@@ -399,17 +399,22 @@ class Ecloud(object):
         if self.verbose:
             start_time = time.mktime(time.localtime())
 
-        if self.vary_P_flag:
-            if self.cloudsim.cloud_list[0].resgasion.P_nTorr != self.vary_P_list['Pressure'][self.N_tracks]:
+        #print(len(self.cloudsim.cloud_list))
 
-                self.cloudsim.cloud_list[0].resgasion.P_nTorr = self.vary_P_list['Pressure'][self.N_tracks]
-                self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0 = self.cloudsim.cloud_list[0].resgasion.P_nTorr*self.cloudsim.cloud_list[0].resgasion.sigma_ion_MBarn/37.89
+        for ii, cloud in enumerate(self.cloudsim.cloud_list):
+            
+            if hasattr(cloud.resgasion, 'P_nTorr_array'):
+                print('non-uniform pressure profile cloud: ', ii)
+                if cloud.resgasion.P_nTorr != cloud.resgasion.P_nTorr_array[self.N_tracks]:
 
-                print("new P_nTorr:" , self.cloudsim.cloud_list[0].resgasion.P_nTorr)
-                print("new nel_mp_ref_0:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0)
-            else:
-                print('no change in pressure')
-        
+                    cloud.resgasion.P_nTorr = cloud.resgasion.P_nTorr_array[self.N_tracks]
+                    cloud.MP_e.nel_mp_ref_0 = cloud.resgasion.P_nTorr*cloud.resgasion.sigma_ion_MBarn/37.89
+
+                    print("new P_nTorr:" , self.cloudsim.cloud_list[0].resgasion.P_nTorr)
+                    print("new nel_mp_ref_0:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0)
+                else:
+                    print('no change in pressure')
+
         self._reinitialize()
 
         if hasattr(beam.particlenumber_per_mp, "__iter__"):

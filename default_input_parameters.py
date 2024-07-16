@@ -174,8 +174,6 @@ parameters_dict = {
             'EFI_sz0'           : -1,
             'EFI_bsp'           : -1,
             'EFI_prob'          : 10,
-            'vary_P_list'       : None,
-            'vary_P_flag'       : False,
 
 
             # Photoemission
@@ -378,8 +376,7 @@ parameters_dict = {
             'EFI_sz0': (),
             'EFI_bsp':(),
             'EFI_prob': (),
-            'vary_P_list': (),
-            'vary_P_flag': (),
+
             't_ion': (),
 
             # Photoemission

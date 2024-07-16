@@ -88,13 +88,25 @@ class residual_gas_ionization:
 
         else:
             raise ValueError("To use EFI feature all EFI parameters have to be defined")
+        
+        if type(P_nTorr) == float:
+            print("Uniform pressure profile along the machine length")
+            self.P_nTorr = P_nTorr
+            #self.P_nTorr_array = ndarray(None)
+
+        elif len(P_nTorr) >= 0:
+            print("Non-uniform pressure profile along the machine length")
+            self.P_nTorr = P_nTorr[0]
+            self.P_nTorr_array = P_nTorr
+        else:
+            raise ValueError("P_nTorr must either be \"float\" or \"ndarray\"")
 
 
 #         self.x_beam_pos = x_beam_pos
 #         self.y_beam_pos = y_beam_pos
 
         self.flag_lifetime_hist = flag_lifetime_hist
-
+        #print(self.P_nTorr_array)
         print('Done res. gas ioniz. init.')
 
     #@profile
@@ -335,6 +347,9 @@ class residual_gas_ionization:
             #qion = DNel/Nint_new_MP
 
             # print('DNel:%.3e\n Nint_new_MP:%d'%(DNel,Nint_new_MP))
+            
+            # print(MP_e.nel_mp_ref)
+            # print(Nint_new_MP)
 
             if Nint_new_MP > 0:
 
