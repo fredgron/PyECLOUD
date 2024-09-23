@@ -381,8 +381,6 @@ class Ecloud(object):
         self.t_sim = 0.0
         self.i_curr_bunch = -1
 
-        # self.vary_P_list = self.kwargs["vary_P_list"]
-        # self.vary_P_flag = self.kwargs["vary_P_flag"]
 
     #    @profile
     def track(self, beam):
