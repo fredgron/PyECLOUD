@@ -126,11 +126,13 @@ class pyecloud_saver:
                         factor_ene_dist_max=None,
                         flag_cross_ion=False,
                         save_only=None,
-                        flag_electric_energy=False
+                        flag_electric_energy=False,
+                        MP_hist_file = None
                         ):
         print('Start pyecloud_saver observation')
 
         self.filen_main_outp = filen_main_outp
+        self.MP_hist_file = MP_hist_file
 
         self.save_only = save_only
 
@@ -244,6 +246,9 @@ class pyecloud_saver:
             self.ene_dist_test_E_impact_eV = 0.
             self.emit_ene_dist_test = {}
 
+        # MP histogram for FBII
+        self._MP_state_hist_init(impact_man.chamb)
+
         # Log
         print('Done init pyecloud_saver.')
 
@@ -289,6 +294,8 @@ class pyecloud_saver:
         #########################
         self._stepbystep_data_save(impact_man, MP_e, beamtim, buildup_sim, cross_ion)
 
+        self._MP_state_hist_save(MP_e)
+
         ##########################################################
         # Quantities saved at each bunch passage and dump to file #
         ##########################################################
@@ -309,6 +316,7 @@ class pyecloud_saver:
 
             if (beamtim.pass_numb + 1) % self.save_mat_every == 0:
                 sio.savemat(self.filen_main_outp, self.build_outp_dict(buildup_sim), oned_as='row')
+                #sio.savemat(self.MP_hist_file, self._MP_hist_dict())
 
             # Check for checkpoint save state
             self._checkpoint_save(beamtim, spacech_ele, t_sc_ON, flag_presence_sec_beams,
@@ -374,9 +382,9 @@ class pyecloud_saver:
             for kk in list(self.pass_by_pass_custom_observables.keys()):
                 self.pbp_custom_data[kk] = []
 
-
     def _pass_by_pass_data_save(self, MP_e, impact_man, beamtim, buildup_sim):
         #update histograms
+        #print("pass by pass")
         self.nel_hist_line = 0.0 * self.nel_hist_line
         if MP_e.N_mp > 0:
             histf.compute_hist(MP_e.x_mp[0:MP_e.N_mp], MP_e.nel_mp[0:MP_e.N_mp], impact_man.bias_x_hist, impact_man.Dx_hist, self.nel_hist_line)
@@ -812,6 +820,7 @@ class pyecloud_saver:
 
     def _stepbystep_data_save(self, impact_man, MP_e, beamtim, buildup_sim, cross_ion):
         #save step by step data
+        #print('saving data step by step')
         # Vars to be accumulated
         self.Nel_impact_last_step_group += impact_man.Nel_impact_last_step
         self.Nel_emit_last_step_group += impact_man.Nel_emit_last_step
@@ -820,6 +829,7 @@ class pyecloud_saver:
 
         #if np.mod(beamtim.ii_curr, self.dec_fact_out)==0:
         if beamtim.tt_curr - self.t_last_save >= self.Dt_save:
+            #print('saving data step by step')
 
             self._stepbystep_check_for_data_resize()
 
@@ -903,6 +913,7 @@ class pyecloud_saver:
 
     def _MP_state_init(self, save_mp_state_time_file):
         # MP state saver init
+        #print(save_mp_state_time_file)
         try:
             save_mp_state_time_file[0]  # check if iterable
             self.flag_save_MP_state = True
@@ -932,6 +943,56 @@ class pyecloud_saver:
 
                     print('Save MP state in: ' + path_MP_state)
                     self.i_obs = self.i_obs + 1
+    
+    def _MP_state_hist_init(self, chamb):
+        self.MP_hist_x = []
+        self.MP_hist_y = []
+        self.MP_hist_vx = []
+        self.MP_hist_vy = []
+        # print(vars(chamb))
+        dy = chamb.y_aper/200
+        dx = chamb.x_aper/200
+
+        self.y_bin = np.arange(-chamb.y_aper, chamb.y_aper+dy, dy)
+        self.x_bin = np.arange(-chamb.x_aper, chamb.x_aper+dx, dx)
+        
+        self.MP_hist_nel = []
+        self.MP_Nmp = []
+        # print(self.y_bin)
+
+    def _MP_state_hist_save(self, MP_e):
+        if self.MP_hist_file is not None:
+        # print('Saving MP histograms')
+
+            MP_hist_y_data, y_bin = np.histogram(MP_e.y_mp[:MP_e.N_mp], bins = self.y_bin)
+            self.MP_hist_y.append(MP_hist_y_data)
+
+            MP_hist_x_data, x_bin = np.histogram(MP_e.x_mp[:MP_e.N_mp], bins = self.x_bin)
+            self.MP_hist_x.append(MP_hist_x_data)
+            
+            MP_hist_vy_data, y_bin = np.histogram(MP_e.vy_mp[:MP_e.N_mp], bins = self.y_bin)
+            self.MP_hist_vy.append(MP_hist_vy_data)
+
+            MP_hist_vx_data, x_bin = np.histogram(MP_e.vx_mp[:MP_e.N_mp], bins = self.x_bin)
+            self.MP_hist_vx.append(MP_hist_vx_data)
+
+            self.MP_hist_nel.append(MP_e.nel_mp_ref)
+            # print(self.MP_hist_y)
+
+            self.MP_Nmp.append(MP_e.N_mp)
+            
+    def _MP_hist_dict(self):
+        MP_hist_dict = {
+                'MP_hist_x': self.MP_hist_x,
+                'MP_hist_y': self.MP_hist_y,
+                'MP_hist_vx':self.MP_hist_vx, 
+                'MP_hist_vy':self.MP_hist_vy,
+                'y_bin': self.y_bin[:-1],
+                'x_bin': self.x_bin[:-1],
+                'MP_hist_nel': self.MP_hist_nel,
+                'MP_hist_Nmp' : self.MP_Nmp  
+            }
+        return MP_hist_dict
 
     def _sim_state_init(self, save_simulation_state_time_file):
         # Simulation state saver init

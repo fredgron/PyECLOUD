@@ -57,6 +57,7 @@ from numpy.random import randn
 from numpy import *
 from scipy.constants import c, k, e, epsilon_0
 import PyECLOUD.BassErsk as BE
+import os
 
 class residual_gas_ionization:
 
@@ -107,7 +108,25 @@ class residual_gas_ionization:
 
         self.flag_lifetime_hist = flag_lifetime_hist
         #print(self.P_nTorr_array)
+
+        # self.efield_file_name = '/home/fgronvol/Documents/PhD_project/Field-ionisation_exploration/Simulation/cloud_outputs/E_fields.csv'
+
+        # if os.path.exists(self.efield_file_name):
+        #     print('Folder already exists')
+        # else:
+            
+        #     field_names = ['Ey_max', 'yionlim', 'xionlim2', 'E-flag']
+        #     #field_values = {'Ey_max':0, 'yionlim':0, 'xionlim2':0, 'E-flag':False}
+        #     from csv import DictWriter
+        #     with open(self.efield_file_name, 'w') as f_object:
+        #         dictwriter_object = DictWriter(f_object, fieldnames=field_names)
+        #         dictwriter_object.writeheader()
+        #         f_object.close()
+            
+
         print('Done res. gas ioniz. init.')
+
+
 
     #@profile
     def generate(self, MP_e, lambda_t, Dt, sigmax, sigmay, x_beam_pos=0., y_beam_pos=0., bnum = None):
@@ -121,7 +140,7 @@ class residual_gas_ionization:
         n_gas = P_Pa / (k * self.Temp_K)    # Get the gas density
 
         if self.use_EFI_flag == False:
-            self.scattering_ionisation(MP_e,n_gas, sigma_ion_mq, lambda_t, Dt, sigmax, sigmay, x_beam_pos, y_beam_pos, v0)
+            self.scattering_ionisation(MP_e, n_gas, sigma_ion_mq, lambda_t, Dt, sigmax, sigmay, x_beam_pos, y_beam_pos, v0)
 
         else:
             if bnum == None: raise ValueError("\'bnum\' must be known to use EFI feature")
@@ -213,6 +232,15 @@ class residual_gas_ionization:
                 else:
                     self.Efield_flag = False     # Deactivate field ionisation flag
                     print("Beam electric field does not fulfil requirements for field ionisation")
+
+                # field_names = ['Ey_max', 'yionlim', 'xionlim2', 'E-flag']
+                # dicter = {'Ey_max':maxe, 'yionlim':yionlim, 'xionlim2':xionlim2, 'E-flag': self.Efield_flag}
+                # from csv import DictWriter
+                
+                # with open(self.efield_file_name, 'a') as f_object:
+                #     dictwriter_object = DictWriter(f_object, fieldnames=field_names)
+                #     dictwriter_object.writerow(dicter)
+                #     f_object.close()
             
                 print("Completed E-field scan")
 
@@ -237,6 +265,8 @@ class residual_gas_ionization:
         #print('DNel:%.3e\n Nint_new_MP:%d'%(DNel,Nint_new_MP))
         # print(MP_e.nel_mp_ref)
         # print(Nint_new_MP)
+        # print(sigmax)
+        # print(sigmay)
 
         if Nint_new_MP > 0:
             unif_flag = (rand(Nint_new_MP) < self.unif_frac)
@@ -257,7 +287,7 @@ class residual_gas_ionization:
                 Nout = int(sum(flag_np))
         
             # print(shape(x_temp))
-            # print(Nint_new_MP)
+            #print(Nint_new_MP)
         
             MP_e.x_mp[ MP_e.N_mp: MP_e.N_mp + Nint_new_MP] = x_temp # Be careful to the indexing when translating to python
             MP_e.y_mp[ MP_e.N_mp: MP_e.N_mp + Nint_new_MP] = y_temp
@@ -266,6 +296,9 @@ class residual_gas_ionization:
             MP_e.vy_mp[ MP_e.N_mp: MP_e.N_mp + Nint_new_MP] = v0 * (rand() - 0.5)
             MP_e.vz_mp[ MP_e.N_mp: MP_e.N_mp + Nint_new_MP] = v0 * (rand() - 0.5)
             MP_e.nel_mp[ MP_e.N_mp: MP_e.N_mp + Nint_new_MP] = MP_e.nel_mp_ref
+
+            #print(MP_e.nel_mp[MP_e.N_mp])
+            #print(MP_e.nel_mp_ref)
         
             if self.flag_lifetime_hist:
                 MP_e.t_last_impact[ MP_e.N_mp: MP_e.N_mp + Nint_new_MP] = -1
@@ -388,4 +421,3 @@ class residual_gas_ionization:
                 if self.flag_lifetime_hist:
                     MP_e.t_last_impact[ MP_e.N_mp: MP_e.N_mp + Nint_new_MP] = -1
 
-                MP_e.N_mp = int(MP_e.N_mp + Nint_new_MP)

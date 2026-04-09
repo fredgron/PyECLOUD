@@ -160,6 +160,7 @@ def read_input_files_and_init_components(pyecl_input_folder='./', skip_beam=Fals
     # Init of saver (first print to stdout)
     if not skip_pyeclsaver:
         pyeclsaver = pysav.pyecloud_saver(cc.logfile_path)
+        # print(cc.logfile_path)
     else:
         pyeclsaver = None
 
@@ -453,6 +454,7 @@ def read_input_files_and_init_components(pyecl_input_folder='./', skip_beam=Fals
         # Real saver init
         if not skip_pyeclsaver:
             flag_last_cloud = cloud_par is cloud_par_list[-1]
+            #print(vars(thiscloud))
             pyeclsaver.start_observing(cc.Dt, MP_e, beamtim, impact_man,
                                        thiscloud.r_center, thiscloud.Dt_En_hist, thiscloud.logfile_path, thiscloud.progress_path,
                                        flag_detailed_MP_info=thiscloud.flag_detailed_MP_info, flag_movie=thiscloud.flag_movie,
@@ -477,7 +479,8 @@ def read_input_files_and_init_components(pyecl_input_folder='./', skip_beam=Fals
                                        factor_ene_dist_max=cc.factor_ene_dist_max,
                                        flag_cross_ion=flag_cross_ion,
                                        save_only = thiscloud.save_only,
-                                       flag_electric_energy=(cc.Dh_electric_energy is not None)
+                                       flag_electric_energy=(cc.Dh_electric_energy is not None),
+                                       MP_hist_file = thiscloud.MP_hist_file
                                        )
             print('pyeclsaver saves to file: %s' % pyeclsaver.filen_main_outp)
 

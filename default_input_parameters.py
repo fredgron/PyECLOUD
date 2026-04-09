@@ -68,6 +68,7 @@ parameters_dict = {
 
             # Saving settings
             'filen_main_outp': 'Pyecltest.mat',
+            'MP_hist_file': 'MP_hist_test.mat',
             'save_only': None,
             'flag_movie': 0,
             'flag_sc_movie': 0,

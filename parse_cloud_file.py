@@ -10,11 +10,16 @@ class cloud_descr_from_file:
 
             if default_param_obj.cloud_name is not None:
                 cloud_name = default_param_obj.cloud_name
-                cloud_output_name = default_param_obj.filen_main_outp.split('.mat')[0]
-                cloud_output_name += '_' + cloud_name + '.mat'
+                if default_param_obj.filen_main_outp is not None:
+                    cloud_output_name = default_param_obj.filen_main_outp.split('.mat')[0]
+                    cloud_output_name += '_' + cloud_name + '.mat'
+                MP_output_name = default_param_obj.MP_hist_file.split('.mat')[0]
+                MP_output_name += '_' + cloud_name + '.mat'
             else:
                 cloud_name = 'default'
-                cloud_output_name = default_param_obj.filen_main_outp
+                if default_param_obj.filen_main_outp is not None:
+                    cloud_output_name = default_param_obj.filen_main_outp
+                MP_output_name = default_param_obj.MP_hist_file
                 # print(default_param_obj.filen_main_outp)
 
             config_dict = {}
@@ -44,8 +49,17 @@ class cloud_descr_from_file:
                 cloud_output_name = default_param_obj.filen_main_outp
                 # print(default_param_obj.filen_main_outp)
 
-        config_dict['filen_main_outp'] = cloud_output_name
+            if default_param_obj.MP_hist_file is not None:
+                MP_output_name = default_param_obj.MP_hist_file.split('.mat')[0]
+                MP_output_name += '_' + cloud_name + '.mat'
+
+            else:
+                MP_output_name = default_param_obj.MP_hist_file
+                # print(default_param_obj.filen_main_outp)
+        if default_param_obj.filen_main_outp is not None:
+            config_dict['filen_main_outp'] = cloud_output_name
         config_dict['cloud_name'] = cloud_name
+        config_dict['MP_hist_file'] = MP_output_name
 
         cc = mlm.obj_from_dict(config_dict)
 

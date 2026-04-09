@@ -68,6 +68,7 @@ class BuildupSimulation(object):
         skip_pyeclsaver=False,
         ignore_kwargs=[],
         spacech_ele=None,
+        #MP_hist_file = None,
         **kwargs
     ):
 
@@ -91,6 +92,7 @@ class BuildupSimulation(object):
             skip_spacech_ele=skip_spacech_ele,
             spacech_ele=spacech_ele,
             ignore_kwargs=ignore_kwargs,
+            #MP_hist_file=MP_hist_file,
             **kwargs
         )
 

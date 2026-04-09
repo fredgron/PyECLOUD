@@ -138,6 +138,7 @@ class Ecloud(object):
         verbose=False,
         save_pyecl_outp_as=None,
         force_interp_at_substeps_interacting_slices=False,
+        #MP_hist_file = None,
         **kwargs
     ):
         """
@@ -282,8 +283,9 @@ class Ecloud(object):
             skip_beam=True,
             spacech_ele=space_charge_obj,
             ignore_kwargs=extra_allowed_kwargs,
-            skip_pyeclsaver=(save_pyecl_outp_as is None),
+            skip_pyeclsaver=(save_pyecl_outp_as is None),# or MP_hist_file ),
             filen_main_outp=save_pyecl_outp_as,
+            #MP_hist_file = MP_hist_file,
             **self.kwargs
         )
 
@@ -376,6 +378,7 @@ class Ecloud(object):
 
         self.verbose = verbose
         self.save_pyecl_outp_as = save_pyecl_outp_as
+        #self.MP_hist_file = MP_hist_file
 
         self.i_reinit = 0
         self.t_sim = 0.0
@@ -762,14 +765,13 @@ class Ecloud(object):
                     flag_multiple_clouds=(len(self.cloudsim.cloud_list) > 1),
                     cloud_name=thisconf.cloud_name,
                     flag_last_cloud=(thiscloud is self.cloudsim.cloud_list[-1]),
+                    #MP_hist_file = thisconf.MP_hist_file
                 )
 
                 thiscloud.pyeclsaver.filen_main_outp = (
-                    thiscloud.pyeclsaver.filen_main_outp.split(".mat")[0].split(
-                        "__iter"
-                    )[0]
-                    + "__iter%d.mat" % self.i_reinit
+                    thiscloud.pyeclsaver.filen_main_outp.split(".mat")[0].split("__iter" )[0] + "__iter%d.mat" % self.i_reinit
                 )
+                #thiscloud.pyeclsaver.MP_hist_file = (thiscloud.pyeclsaver.MP_hist_file.split(".mat")[0].split("__iter")[0]+"__iter%d.mat" %self.i_reinit)
 
         if self.save_ele_distributions_last_track:
             self.rho_ele_last_track = []
@@ -888,10 +890,4 @@ class Ecloud(object):
 
         if beam.slice_info != "unsliced":
             dz = beam.slice_info["z_bin_right"] - beam.slice_info["z_bin_left"]
-            self._track_single_slice(
-                beam, ix=np.arange(beam.macroparticlenumber), dz=dz
-            )
-
-    def remove_savers(self):
-        for thiscloud in self.cloudsim.cloud_list:
-            thiscloud.pyeclsaver = None
+            self._track_single_slice(beam, ix=np.arange(beam.macroparticlenumber), dz=dz, slicenum=beam.slice_info["info_parent_bunch"]["i_bunch"])
