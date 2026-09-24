@@ -388,9 +388,7 @@ class Ecloud(object):
     #    @profile
     def track(self, beam):
         #import ipdb; ipdb.set_trace()
-        print("P_nTorr:" , self.cloudsim.cloud_list[0].resgasion.P_nTorr)
-        print("nel_mp_ref:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref)
-        print("nel_mp_ref_0:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0)
+        
 
         if self.track_only_first_time:
             if self.N_tracks > 0:
@@ -406,9 +404,14 @@ class Ecloud(object):
             
             if hasattr(cloud.resgasion, 'P_nTorr_array'):
                 print('non-uniform pressure profile cloud: ', ii)
+                print("P_nTorr:" , self.cloudsim.cloud_list[0].resgasion.P_nTorr)
+                print("nel_mp_ref:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref)
+                print("nel_mp_ref_0:" , self.cloudsim.cloud_list[0].MP_e.nel_mp_ref_0)
                 if cloud.resgasion.P_nTorr != cloud.resgasion.P_nTorr_array[self.N_tracks]:
 
                     cloud.resgasion.P_nTorr = cloud.resgasion.P_nTorr_array[self.N_tracks]
+                    print(cloud.resgasion.P_nTorr)
+                    print(cloud.resgasion.sigma_ion_MBarn)
                     cloud.MP_e.nel_mp_ref_0 = cloud.resgasion.P_nTorr*cloud.resgasion.sigma_ion_MBarn/37.89
 
                     print("new P_nTorr:" , self.cloudsim.cloud_list[0].resgasion.P_nTorr)
